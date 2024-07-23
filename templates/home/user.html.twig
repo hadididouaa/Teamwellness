@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Styles pour le message de bienvenue */
+        #successMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #93a84c; /* Couleur de fond verte */
+            color: white; /* Couleur du texte blanc */
+            border-radius: 17px; /* Coins arrondis */
+            box-shadow: 0 40px 30px rgba(0, 0, 0, 0.5); /* Ombre portée pour effet 3D */
+            padding: 35px; /* Espacement intérieur */
+            z-index: 1000; /* Z-index pour la superposition */
+            text-align: center; /* Centrage du contenu */
+            max-width: 1000px;
+            max-height: 900px ;/* Largeur maximale */
+            display: none; /* Caché par défaut */
+            font-family: 'Arial', sans-serif; /* Police de texte */
+        }
+
+        #successMessage .message-content {
+            font-size: 35px; /* Augmenté */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #successMessage .btn-primary {
+            background-color:rgb(16,55,65);
+            color: white;
+            border-color: rgb(16,55,65);
+            font-size: 20px; /* Augmenté */
+            margin-top: 20px;
+            padding: 10px 20px;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        #successMessage .btn-primary:hover {
+            background-color: rgb(16, 74, 88);
+            border-color:rgb(16, 74, 88);
+        }
+
+        /* Styles pour le rectangle 3D */
+        .form-container {
+            background-color: #93a84c;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            width: 40%;
+            max-width: 800px;
+            height: 50%;
+            max-height: 800px;
+            position: fixed;
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .form-container .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-container button[type="submit"] {
+            background-color: rgb(16,55,65);
+            color: white;
+            border-color: rgb(16,55,65);
+            font-size: 20px; /* Augmenté */
+            padding: 10px 20px;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+
+        .form-container button[type="submit"]:hover {
+            background-color:rgb(16, 74, 88);
+            border-color: rgb(16, 74, 88);
+        }
+
+        /* Styles pour l'image en dehors du rectangle */
+        #mind2Image {
+            position: fixed;
+            top: 27%; /* Ajuster la position verticale */
+            left: 10%; /* Ajuster la position horizontale */
+            width: 500px; /* Ajuster la largeur de l'image */
+            height: auto; /* Garder le ratio de l'image */
+        }
+
+        /* Centrage du bouton Valider */
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Styles pour les messages en gras */
+        .form-container p {
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+            font-size: 32px; /* Augmenté */
+        }
+
+        .form-container label {
+            font-size: 20px; /* Augmenté */
+        }
+
+        .form-container .form-control {
+            font-size: 18px; /* Augmenté */
+        }
+
+        .form-container .form-errors {
+            font-size: 18px; /* Augmenté */
+        }
+    </style>
+
+    <!-- Image Mind2 indépendante -->
+    <img id="mind2Image" src="{{ asset('User/img/Mind2.png') }}" alt="Mind2 Image">
+
+    {% for flash_message in app.flashes('success') %}
+        <div id="successMessage">
+            <div class="message-content">
+                <span>{{ flash_message|raw }}</span>
+                <br>
+            </div>
+            <button id="startQuestionnaire" class="btn btn-primary">C'est parti !</button>
+        </div>
+    {% endfor %}
+
+    <!-- Rectangle 3D pour le formulaire -->
+    <div class="form-container">
+        {{ form_start(form) }}
+        <div class="form-group">
+            <p>Chaque email n'a qu'une vie, utilisez-le bien.</p>
+            <p></p>
+            {{ 'Adresse e-mail :' }}
+
+
+            {{ form_widget(form.email, {'attr': {'class': 'form-control', 'id': 'emailField'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Valider</button>
+        {{ form_end(form) }}
+    
+        <div id="questionnaireSection" style="display: none;">
+            <!-- Section du questionnaire à remplir -->
+            
+        </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const successMessage = document.getElementById('successMessage');
+            const startQuestionnaireButton = document.getElementById('startQuestionnaire');
+
+            if (successMessage && startQuestionnaireButton) {
+                successMessage.style.display = 'block'; // Afficher le message de bienvenue
+
+                startQuestionnaireButton.addEventListener('click', function() {
+                    // Cacher le message de bienvenue et afficher la section du questionnaire
+                    successMessage.style.display = 'none';
+                    document.getElementById('questionnaireSection').style.display = 'block';
+
+                    // Vérifier si collaborateur.id est défini avant de rediriger
+                    {% if collaborateur.id is defined and collaborateur.id %}
+                        const url = "{{ path('questionnair', { 'id': collaborateur.id }) }}";
+                        window.location.href = url;
+                    {% else %}
+                        console.error('collaborateur.id is not defined or empty.');
+                        // Handle the situation where collaborateur.id is not set
+                        // You may want to display an error message or handle this case differently
+                    {% endif %}
+                });
+            }
+        });
+    </script>
+{% endblock %}

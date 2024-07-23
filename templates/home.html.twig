@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style>
+    .fun-text {
+        color: #93a84c; /* Couleur vive */
+        font-size: 1.5em; /* Taille de police plus grande */
+        text-shadow: 2px 2px 3px rgba(114, 104, 104, 0.5); /* Ombre portée pour le contraste */
+        animation: fadeInUp 1s ease; /* Animation pour attirer l'attention */
+    }
+
+    .fun-button {
+        margin-left: 0px;
+        margin-right: 90px; /* Ajustement de la marge à gauche pour déplacer le bouton vers la gauche */
+        background-color: #93a84c; /* Couleur de fond */
+        color: #4c4c4c; /* Couleur du texte */
+        padding: 12px 24px; /* Espacement intérieur */
+        border: none; /* Supprimer les bordures */
+        border-radius: 30px; /* Coins arrondis */
+        font-size: 1.2em; /* Taille de police */
+        cursor: pointer; /* Curseur pointer */
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Transition en douceur */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre douce */
+    }
+    .fun-button {
+    margin-left: 70px; 
+    background-color: #93a84c; /* Couleur de fond */
+    color: #4c4c4c; /* Couleur du texte */
+    padding: 12px 24px; /* Espacement intérieur */
+    border: none; /* Supprimer les bordures */
+    border-radius: 30px; /* Coins arrondis */
+    font-size: 1.2em; /* Taille de police */
+    cursor: pointer; /* Curseur pointer */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transition en douceur */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre douce */
+}
+
+.fun-button:hover {
+    transform: translateX(10px); /* Déplace le bouton de 10px vers la droite */
+}
+
+
+    .fun-button:hover {
+        background-color: #bbcd7f; /* Couleur de fond au survol */
+        transform: scale(1.05); /* Zoom léger au survol */
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(150px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .aligned-paragraphs {
+        margin-left: 20px; /* Ajuster ce chiffre pour aligner les paragraphes */
+        margin-right: 20px; /* Assurez-vous que ce chiffre est égal à celui de la marge de gauche */
+        text-align: left; /* Assure que le texte est aligné à gauche */
+    }
+   
+</style>
+<div style="display: flex; align-items: center; justify-content: center; margin-top: 20px;">
+    <div style="text-align: center; max-width: 600px; margin-right: 20px; margin-left: 20px;">
+        <br>
+        <h1>Bienvenue sur notre site dédié au bien-être chez Teamwill !</h1>
+        <br>
+        <p class="aligned-paragraphs"><strong class="fun-text"> Prêt Pour Un Quiz Super Amusant? </strong></p>
+        <p class="aligned-paragraphs"><strong>Réponds à nos questions rigolotes et découvre des interprétations hilarantes de ta personnalité!</strong></p>
+        <p class="aligned-paragraphs"><strong>Chaque question te réserve une surprise unique.</strong></p>
+        <p class="aligned-paragraphs"><strong> Vous êtes le seul et unique VIP qui peut voir vos résultats!  </strong></p>
+        <p class="aligned-paragraphs"><strong>Pas de spoilers pour le département des ressources humaines.</strong></p>
+        <p class="aligned-paragraphs"><strong>C'est notre petit secret bien gardé ! 🤫</strong></p><br>
+        <a href="{{ path('userform') }}" class="fun-button">
+          <strong > Déclenche l'Aventure!!</strong>
+        </a>
+        <br>
+        <br>
+    </div>
+    <img src="{{ asset('/User/img/im.png') }}" alt="Image Description" style="max-width: 700px;" class="image-with-margin">
+</div>
+{% endblock %}
