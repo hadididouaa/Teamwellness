@@ -100,7 +100,7 @@ h6,
 
 /*** Navbar ***/
 .navbar .navbar-nav .nav-link {
-    padding: 30px 15px;
+    padding: 10px 15px;
     color: var(--dark);
     font-weight: 500;
     outline: none;
@@ -133,7 +133,7 @@ h6,
 @media (max-width: 991.98px) {
     .navbar .navbar-nav .nav-link  {
         margin-right: 0;
-        padding: 10px 0;
+        padding: 5px 0;
     }
 
     .navbar .navbar-nav {

@@ -136,18 +136,77 @@ class QuestionnaireController extends AbstractController
     }
     
 
-#[Route('/evaluation/{id}', name: 'ev')]
-public function evaluation($id, EntityManagerInterface $entityManager): Response {
+    #[Route('/evaluation/{id}', name: 'ev')]
+    public function evaluation($id, EntityManagerInterface $entityManager): Response {
+        $collaborateur = $entityManager->getRepository(Collaborateur::class)->find($id);
+        if (!$collaborateur) {
+            throw $this->createNotFoundException('Collaborateur non trouvé pour cet ID.');
+        }
+        
+        $evaluation = $collaborateur->getEvaluation();
+       
+        return $this->render('home/evaluation.html.twig', [
+            'interpretation' => $evaluation->getInterpretation(),
+            'averageScore' => $evaluation->getMoyenne(),
+            'collaborateur' => $collaborateur,
+        ]);
+    }
+    
+    #[Route('/statistiques/{id}', name: 'statistiques')]
+public function statistiques(
+    $id,
+    EvaluationRepository $evaluationRepository,
+    EntityManagerInterface $entityManager,
+    LoggerInterface $logger
+): Response {
     $collaborateur = $entityManager->getRepository(Collaborateur::class)->find($id);
     if (!$collaborateur) {
         throw $this->createNotFoundException('Collaborateur non trouvé pour cet ID.');
     }
-    
-    $evaluation = $collaborateur->getEvaluation();
-   
-    return $this->render('home/evaluation.html.twig', [
-        'interpretation' => $evaluation->getInterpretation(),
-        'averageScore' => $evaluation->getMoyenne(),
+
+    $evaluations = $evaluationRepository->findAll();
+    $totalEvaluations = 0;
+    $besoinAssistanceCount = 0;
+    $recommandationAssistanceCount = 0;
+    $bonneEtatCount = 0;
+
+    foreach ($evaluations as $evaluation) {
+        $interpretation = $evaluation->getInterpretation();
+        if ($interpretation) {
+            if (str_contains($interpretation, 'un appui psychologique est comme un baume pour le corps et l\'âme')) {
+                $besoinAssistanceCount++;
+                $totalEvaluations++;
+            } elseif (str_contains($interpretation, 'Un petit soin psychologique est comme une saveur de chocolat lors d’une journée remplie')) {
+                $recommandationAssistanceCount++;
+                $totalEvaluations++;
+            } elseif (str_contains($interpretation, 'Bien dans son corps et son âme, prêt à danser la salsa avec les défis de la vie')) {
+                $bonneEtatCount++;
+                $totalEvaluations++;
+            }
+        }
+    }
+
+    if ($totalEvaluations === 0) {
+        $percentages = [
+            'besoin_assistance' => 0,
+            'recommandation_assistance' => 0,
+            'bonne_etat' => 0,
+        ];
+    } else {
+        $percentages = [
+            'besoin_assistance' => ($besoinAssistanceCount / $totalEvaluations) * 100,
+            'recommandation_assistance' => ($recommandationAssistanceCount / $totalEvaluations) * 100,
+            'bonne_etat' => ($bonneEtatCount / $totalEvaluations) * 100,
+        ];
+    }
+
+    $logger->info('Percentages:', $percentages);
+
+    return $this->render('home/statistiques.html.twig', [
+        'percentages' => $percentages,
+        'collaborateur' => $collaborateur,
     ]);
 }
+
+
 }

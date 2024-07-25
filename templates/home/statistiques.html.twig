@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<style>
+    .custom-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 200px;
+        height: 85px;
+        color: white;
+        background: url('{{ asset('User/img/st.png') }}') no-repeat center center;
+        background-size: cover;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+        line-height: 1;
+    }
+
+    .custom-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        z-index: -1;
+    }
+
+    .custom-button:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+</style>
+<div style="position: relative; display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; z-index: 1;">
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <img src="{{ asset('User/img/stat.png') }}" alt="Description de l'image" style="max-width: 100px; height: auto; margin-right: 20px;">
+            <h1 style="margin: 0;">Statistiques d'Interprétations</h1>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; width: 100%;">
+        <div style="display: flex; align-items: center; width: 80%; max-width: 800px; padding-left: 100px;">
+            <div style="margin-right: 40px;">
+                <ul id="chartLegend" style="list-style-type: none; padding: 0; margin: 0;">
+                    <li style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; background-color: rgba(255, 0, 0, 0.6); margin-right: 5px;"></span>
+                        <strong>Besoin d'Assistance Psychologique</strong>
+                    </li>
+                    <li style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; background-color: #103741; margin-right: 5px;"></span>
+                        <strong>Recommandation d'Assistance Psychologique</strong>
+                    </li>
+                    <li style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; background-color: #94A94D; margin-right: 5px;"></span>
+                        <strong>Bonne État Psychologique</strong>
+                    </li>
+                </ul>
+            </div>
+            <div style="width: 300px; height: 300px;">
+                <canvas id="statsChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <a href="{{ path('ev', { 'id': collaborateur.id }) }}" class="btn btn-primary custom-button">Retour à l'évaluation</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('statsChart').getContext('2d');
+    var statsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                'Besoin d\'Assistance Psychologique',
+                'Recommandation d\'Assistance Psychologique',
+                'Bonne État Psychologique'
+            ],
+            datasets: [{
+                label: 'Pourcentage',
+                data: [
+                    {{ percentages.besoin_assistance }},
+                    {{ percentages.recommandation_assistance }},
+                    {{ percentages.bonne_etat }}
+                ],
+                backgroundColor: [
+                    'rgba(255, 0, 0, 0.6)', // Red for need of assistance
+                    '#103741', // Blue for recommendation
+                    '#94A94D'  // Green for good state
+                ],
+                borderColor: [
+                    'rgba(255, 0, 0, 1)', // Red border
+                    '#103741', // Blue border
+                    '#94A94D'  // Green border
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false // Hide the default legend
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var dataset = tooltipItem.dataset;
+                            var currentValue = dataset.data[tooltipItem.dataIndex];
+                            var total = dataset.data.reduce(function (acc, value) {
+                                return acc + value;
+                            }, 0);
+                            var percentage = ((currentValue / total) * 100).toFixed(2);
+                            return tooltipItem.label + ': ' + percentage + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

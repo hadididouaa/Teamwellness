@@ -1,9 +1,28 @@
+{# templates/home/evaluation.html.twig #}
+
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Résultats de l'évaluation</h1>
-    <div>
-        <p>Interprétation : {{ interpretation }}</p>
-      
+    <div style="text-align: center; margin-top: 50px;"> <!-- Ajout de margin-top pour pousser le contenu vers le bas -->
+        <div style="position: relative; display: inline-block; margin-top: 20px;"> <!-- Ajout de margin-top pour espacer le GIF du haut -->
+            {% if interpretation == "Pour jouir du bien-être dans la vie, un appui psychologique est comme un baume pour le corps et l'âme" %}
+                <img src="{{ asset('User/img/gif1.gif') }}" alt="GIF pour besoin d'assistance" style="width: 100%; height: auto;">
+            {% elseif interpretation == "Un petit soin psychologique est comme une saveur de chocolat lors d’une journée remplie" %}
+                <img src="{{ asset('User/img/gif2.gif') }}" alt="GIF pour recommandation d'assistance" style="width: 100%; height: auto;">
+            {% elseif interpretation == "Bien dans son corps et son âme, prêt à danser la salsa avec les défis de la vie" %}
+                <img src="{{ asset('User/img/i1.gif') }}" alt="GIF pour bonne état psychologique" style="width: 100%; height: auto;">
+            {% endif %}
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                        color: rgba(0, 0, 0, 0.9); font-weight: 900; font-size: 1.6em; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 10px; width: 80%; max-width: 600px;">
+                {{ interpretation }}
+            </div>
+        </div>
+
+        <!-- Container for the button -->
+        <div style="margin-top: 0px;">
+            <a href="{{ path('statistiques', { 'id': collaborateur.id }) }}" class="btn btn-primary" style="display: inline-block; font-size: 1.2em; padding: 10px 30px;">
+                Voir les Statistiques
+            </a>
+        </div>
     </div>
 {% endblock %}

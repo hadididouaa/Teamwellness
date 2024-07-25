@@ -60,9 +60,9 @@
             height: 50%;
             max-height: 800px;
             position: fixed;
-            top: 50%;
-            right: 5%;
-            transform: translateY(-50%);
+            top: 45%; /* Ajusté pour déplacer vers le haut */
+            right: 5%; /* Ajusté pour aligner à droite */
+            transform: translateY(-50%); /* Ajustement vertical */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -91,8 +91,8 @@
         /* Styles pour l'image en dehors du rectangle */
         #mind2Image {
             position: fixed;
-            top: 27%; /* Ajuster la position verticale */
-            left: 10%; /* Ajuster la position horizontale */
+            top: 22%; /* Ajuster la position verticale */
+            left: 5%; /* Ajuster la position horizontale pour être à gauche */
             width: 500px; /* Ajuster la largeur de l'image */
             height: auto; /* Garder le ratio de l'image */
         }
@@ -126,11 +126,11 @@
     <!-- Image Mind2 indépendante -->
     <img id="mind2Image" src="{{ asset('User/img/Mind2.png') }}" alt="Mind2 Image">
 
+    <!-- Message de succès indépendant -->
     {% for flash_message in app.flashes('success') %}
         <div id="successMessage">
             <div class="message-content">
                 <span>{{ flash_message|raw }}</span>
-                <br>
             </div>
             <button id="startQuestionnaire" class="btn btn-primary">C'est parti !</button>
         </div>
