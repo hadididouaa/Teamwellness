@@ -9,10 +9,9 @@
         align-items: center;
         justify-content: center;
         width: 200px;
-        height: 85px;
+        height: 55px;
         color: white;
-        background: url('{{ asset('User/img/st.png') }}') no-repeat center center;
-        background-size: cover;
+        background-color: #93a84c;
         border: none;
         border-radius: 5px;
         font-size: 18px;
@@ -24,108 +23,67 @@
         line-height: 1;
     }
 
-    .custom-button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 5px;
-        z-index: -1;
+    .custom-button:hover {
+        background-color: #a4b765;
     }
 
-    .custom-button:hover {
-        background-color: rgba(0, 0, 0, 0.2);
+    .stat-item {
+        position: relative;
+        display: inline-block;
+        margin: 20px;
+        text-align: center;
+    }
+
+    .stat-item img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-item span {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #103741;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .stat-label {
+        margin-top: 10px;
+        font-size: 1.1em;
+        font-weight: bold;
     }
 </style>
 <div style="position: relative; display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
     <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; z-index: 1;">
         <div style="display: flex; align-items: center; margin-bottom: 10px;">
-            <img src="{{ asset('User/img/stat.png') }}" alt="Description de l'image" style="max-width: 100px; height: auto; margin-right: 20px;">
             <h1 style="margin: 0;">Statistiques d'Interprétations</h1>
         </div>
     </div>
-
+<br><br><br>
     <div style="display: flex; justify-content: center; width: 100%;">
-        <div style="display: flex; align-items: center; width: 80%; max-width: 800px; padding-left: 100px;">
-            <div style="margin-right: 40px;">
-                <ul id="chartLegend" style="list-style-type: none; padding: 0; margin: 0;">
-                    <li style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <span style="display: inline-block; width: 12px; height: 12px; background-color: rgba(255, 0, 0, 0.6); margin-right: 5px;"></span>
-                        <strong>Besoin d'Assistance Psychologique</strong>
-                    </li>
-                    <li style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <span style="display: inline-block; width: 12px; height: 12px; background-color: #103741; margin-right: 5px;"></span>
-                        <strong>Recommandation d'Assistance Psychologique</strong>
-                    </li>
-                    <li style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <span style="display: inline-block; width: 12px; height: 12px; background-color: #94A94D; margin-right: 5px;"></span>
-                        <strong>Bonne État Psychologique</strong>
-                    </li>
-                </ul>
-            </div>
-            <div style="width: 300px; height: 300px;">
-                <canvas id="statsChart"></canvas>
-            </div>
+        <div class="stat-item">
+            <img src="{{ asset('User/img/triste.jpg') }}" alt="Besoin d'Assistance Psychologique">
+            <span>{{ percentages.besoin_assistance }}%</span>
+            <div class="stat-label">Besoin d'Assistance Psychologique</div>
+        </div>
+        <div class="stat-item">
+            <img src="{{ asset('User/img/rec.jpg') }}" alt="Recommandation d'Assistance Psychologique">
+            <span>{{ percentages.recommandation_assistance }}%</span>
+            <div class="stat-label">Recommandation d'Assistance Psychologique</div>
+        </div>
+        <div class="stat-item">
+            <img src="{{ asset('User/img/bon.jfif') }}" alt="Bonne État Psychologique">
+            <span>{{ percentages.bonne_etat }}%</span>
+            <div class="stat-label">Bonne État Psychologique</div>
         </div>
     </div>
+    <br><br>
+    <br>
     <a href="{{ path('ev', { 'id': collaborateur.id }) }}" class="btn btn-primary custom-button">Retour à l'évaluation</a>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    var ctx = document.getElementById('statsChart').getContext('2d');
-    var statsChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: [
-                'Besoin d\'Assistance Psychologique',
-                'Recommandation d\'Assistance Psychologique',
-                'Bonne État Psychologique'
-            ],
-            datasets: [{
-                label: 'Pourcentage',
-                data: [
-                    {{ percentages.besoin_assistance }},
-                    {{ percentages.recommandation_assistance }},
-                    {{ percentages.bonne_etat }}
-                ],
-                backgroundColor: [
-                    'rgba(255, 0, 0, 0.6)', // Red for need of assistance
-                    '#103741', // Blue for recommendation
-                    '#94A94D'  // Green for good state
-                ],
-                borderColor: [
-                    'rgba(255, 0, 0, 1)', // Red border
-                    '#103741', // Blue border
-                    '#94A94D'  // Green border
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false // Hide the default legend
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            var dataset = tooltipItem.dataset;
-                            var currentValue = dataset.data[tooltipItem.dataIndex];
-                            var total = dataset.data.reduce(function (acc, value) {
-                                return acc + value;
-                            }, 0);
-                            var percentage = ((currentValue / total) * 100).toFixed(2);
-                            return tooltipItem.label + ': ' + percentage + '%';
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
 {% endblock %}

@@ -1,119 +1,170 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-   
-    
-    <style>
-          .question-container {
-            text-align: center; /* Centre le contenu */
-            margin: 0 auto;
-            width: 60%; /* Largeur réduite pour centrer */
-            margin-right: 20%; /* Décale légèrement vers la droite */
-        }
-        .question-text {
-            margin-bottom: 10px; /* Ajoute une marge en bas du texte de la question */
-        }
-    
-        .gif {
-            width: 35%; /* Largeur à 80% de son conteneur pour réduire la taille */
-            max-height: 300px; /* Hauteur maximale de 250 pixels */
-            display: block; /* Affiche l'image en tant qu'élément de bloc */
-            margin: 0 auto 5px auto; /* Centre l'image avec une marge en bas */
-        }
-        .response-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .response-list li {
-            display: block;
-            margin-bottom: 10px; /* Ajoute une marge en bas de chaque réponse */
-        }
-        .question-heading {
-         /* Aligne le texte à droite */
-            margin-left: 10px; /* Décale légèrement vers la droite */
-        }
-        .btn-custom {
-            background-color: #93a84c; /* Couleur de fond personnalisée */
-            border: none; /* Supprime les bordures */
-            color: white; /* Couleur du texte */
-            padding: 10px 20px; /* Ajoute du padding */
-            text-align: center; /* Centre le texte */
-            text-decoration: none; /* Supprime la décoration du texte */
-            display: inline-block; /* Affiche en tant qu'élément inline-block */
-            font-size: 16px; /* Taille de police */
-            margin: 4px 2px; /* Marges */
-            cursor: pointer; /* Change le curseur en pointeur */
-            border-radius: 12px; /* Bordures arrondies */
-            transition: background-color 0.3s ease; /* Ajoute une transition pour l'effet hover */
-        }
+<style>
+    .question-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto;
+        width: 90%;
+        margin-top: 20px;
+    }
 
-        .btn-custom:hover {
-            background-color: #7c8c3e; /* Couleur de fond au survol */
-        }
+    .question-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 20px;
+        border: 2px solid #93a84c;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        min-height: 250px;
+    }
 
-        .btn-custom:disabled {
-            background-color: #b2c29e; /* Couleur de fond pour les boutons désactivés */
-            cursor: not-allowed; /* Change le curseur pour les boutons désactivés */
-        }
-    </style>
-   
-       
-        
-        <form method="post" >
-            {% for question in questions %}
+    .gif {
+        width: 100%;
+        max-height: 350px;
+    }
+
+    .question-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+    }
+
+    .gif-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+    }
+
+    .question-heading {
+        font-size: 30px;
+        font-weight: bold;
+        color: #4a5c2c;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .question-text {
+        font-weight: bold;
+    }
+
+    .response-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .response-list label {
+        font-weight: bold;
+    }
+
+    .response-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .response-list input[type="radio"] {
+        margin-right: 10px;
+    }
+
+    .response-list input[type="radio"]:checked + label {
+        color: green;
+    }
+
+   /* Assurez-vous que vos boutons ont une largeur uniforme */
+.btn-custom {
+    background-color: #93a84c;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+    width: 150px; /* Largeur fixe pour uniformité */
+}
+
+.btn-custom:hover {
+    background-color: #7c8c3e;
+}
+
+.btn-custom:disabled {
+    background-color: #b2c29e;
+    cursor: not-allowed;
+}
+
+/* Assurez-vous que les éléments de la pagination sont centrés et ont une largeur uniforme */
+.custom-pagination .page-item {
+    display: flex;
+    justify-content: center;
+}
+
+.custom-pagination .page-link {
+    width: 150px; /* Largeur fixe pour uniformité */
+    display: flex;
+    justify-content: center;
+}
+
+</style>
+
+<form method="post">
+    <div class="question-container">
+        {% for question in questions %}
             <input type="hidden" name="question_id" value="{{ question.id }}">
-            <div class="text-center">
-                {% set gif_class = 'gif-' ~ question.num %}
-                <img src="{{ asset('User/img/questionnnn-' ~ question.num ~ '.gif') }}" 
-                alt="GIF pour la question {{ question.num }}" 
-                class="gif">
-                <!-- Utilisation de style inline pour spécifier la taille et la marge -->
+            <div class="question-item">
+                <div class="question-content">
+                    <h3 class="question-heading">Question {{ question.num }}:</h3><br>
+                    <h2 class="question-text">{{ question.enonce }}</h2>
+                    <br>
+                    <ul class="response-list">
+                        <li>
+                            <input type="radio" id="response{{ question.id }}_1" name="response" value="{{ question.score1 }}" {% if responses[question.id] is defined and responses[question.id] == question.score1 %} checked {% endif %} required>
+                            <label for="response{{ question.id }}_1">{{ question.rep1 }}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="response{{ question.id }}_2" name="response" value="{{ question.score2 }}" {% if responses[question.id] is defined and responses[question.id] == question.score2 %} checked {% endif %} required>
+                            <label for="response{{ question.id }}_2">{{ question.rep2 }}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="response{{ question.id }}_3" name="response" value="{{ question.score3 }}" {% if responses[question.id] is defined and responses[question.id] == question.score3 %} checked {% endif %} required>
+                            <label for="response{{ question.id }}_3 }}">{{ question.rep3 }}</label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="gif-container">
+                    <img src="{{ asset('User/img/questionnnn-' ~ question.num ~ '.gif') }}" alt="GIF pour la question {{ question.num }}" class="gif">
+                </div>
             </div>
-        </div>
-            <div class="response-list" >
-                <h3 class="question-heading">Question {{ question.num }}:</h3><strong class="question-heading" >{{ question.enonce }}</strong>
-                <br>
-               
-                <ul>
-                    <li>
-                        <input type="radio" id="response{{ question.id }}_1" name="response" value="{{ question.score1 }}" required>
-                        <label for="response{{ question.id }}_1">{{ question.rep1 }}</label>
-                    </li>
-                    <li>
-                        <input type="radio" id="response{{ question.id }}_2" name="response" value="{{ question.score2 }}" required>
-                        <label for="response{{ question.id }}_2">{{ question.rep2 }}</label>
-                    </li>
-                    <li>
-                        <input type="radio" id="response{{ question.id }}_3" name="response" value="{{ question.score3 }}" required>
-                        <label for="response{{ question.id }}_3">{{ question.rep3 }}</label>
-                    </li>
-                </ul>
-            </div>
-            {% endfor %}
-            <div class="navigation text-center">
-                <ul class="pagination justify-content-center custom-pagination">
-                    <li class="page-item">
-                          {% if questions.currentPageNumber > 1 %}
-                    
-                          <a  class="page-link btn btn-custom" href="{{ path('questionnair', { 'id': collaborateur.id, 'page': questions.currentPageNumber - 1 }) }}" aria-label="Précédent">Précédent</a>
-
-                    
-                    {% else %}
-                 
-                            <span class="page-link btn btn-custom" disabled>Précédent</span>
-                      
-                    {% endif %}
-                </li>
-                <li class="page-item">
-                    {% if questions.currentPageNumber < questions.pageCount %}
-                        <button type="submit" class="page-link btn btn-custom" aria-label="Suivant">Suivant</button>
-                    {% else %}
-                        <button type="submit" class="page-link btn btn-custom"aria-label="Submit">Submit</button>
-                    {% endif %}
-                </li>
-            </ul>
-        </div>
-
+        {% endfor %}
+    </div>
+    <div class="navigation text-center">
+        <ul class="pagination justify-content-center custom-pagination">
+            <li class="page-item">
+                {% if questions.currentPageNumber > 1 %}
+                    <a class="page-link btn btn-custom" href="{{ path('questionnair', { 'id': collaborateur.id, 'page': questions.currentPageNumber - 1 }) }}" aria-label="Précédent">Précédent</a>
+                {% else %}
+                    <span class="page-link btn btn-custom" disabled>Précédent</span>
+                {% endif %}
+            </li>
+            <li class="page-item">
+                {% if questions.currentPageNumber < questions.pageCount %}
+                    <button type="submit" class="page-link btn btn-custom" aria-label="Suivant">Suivant</button>
+                {% else %}
+                    <button type="submit" class="page-link btn btn-custom" aria-label="Submit">Submit</button>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
 </form>
 {% endblock %}
